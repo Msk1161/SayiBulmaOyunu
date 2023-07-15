@@ -114,7 +114,11 @@ public class Methods extends Objects{
                     if(arti==getLevel()){
                         //System.out.println("Sayiniz : " + listGirilenSayi);
                         System.out.println("+ "+arti +" <-> Tebrikler, " + kacKeredeBuldun + ". denemede buldunuz.");
-                        System.out.println("Tutulan Sayi : " + listUretSayi);
+                        String urettilenSayiYazdir="";
+                        for (int i = 0; i <listUretSayi.size() ; i++) {
+                            urettilenSayiYazdir=urettilenSayiYazdir + listUretSayi.get(i);
+                        }
+                        System.out.print("Tutulan Sayi : " + urettilenSayiYazdir);
                     }else{
                         //System.out.println("Sayiniz : " + listGirilenSayi);
                         System.out.println("+ " + arti + ", - "+(toplamBulunan-arti));
@@ -122,6 +126,8 @@ public class Methods extends Objects{
                 }
 
         } while (arti < getLevel());
+        levelDegerlendirme();
+        /*
         puanHesapla();
         puanYazma();
         setLevel(getLevel()+1);
@@ -148,9 +154,39 @@ public class Methods extends Objects{
             } else {
                 System.out.println("Seviyeniz kaydedildi. istediginiz zaman aynı seviyeden devam edebilirsiniz.");
             }
+*/
+    }
+    private void levelDegerlendirme() throws IOException {
+        puanHesapla();
+        puanYazma();
+        setLevel(getLevel()+1);
+        if(getLevel()==10){
+            System.out.println("Tebrikler. 9 seviyeli oyunu bitirdiniz.");
+            setLevel(1);
+            dosyaYazma();
+            System.out.println("Oyun seviyesi 1 olarak güncellendi.");
+        }else {
+            System.out.println("Tebrikler " + getLevel() + ". seviyeye geçtiniz. ");
+            dosyaYazma();
+        }
+
+        System.out.println(getLevel() + ". seviyeden devam etmek icin 'D', çıkmak için herhangi bir katakter yazınız : ");
+        String devamEt = scan.next().toUpperCase().substring(0, 1);
+        if (devamEt.equals("D")) {
+
+            starting();
+            sayiUret(getLevel());
+            System.out.println("===>>> OYUN BASLIYOR <<<====");
+            bekletme(15);
+            sayiKontrol();
+
+        } else {
+            System.out.println("Seviyeniz kaydedildi. istediginiz zaman aynı seviyeden devam edebilirsiniz.");
+        }
 
     }
-    private void sayiUret(int a) {
+
+        private void sayiUret(int a) {
         Random rnd=new Random();
         int low=1;
         for (int i = 1; i <a ; i++) {
