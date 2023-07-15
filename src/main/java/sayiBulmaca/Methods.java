@@ -6,28 +6,31 @@ import java.util.*;
 public class Methods extends Objects{
     Scanner scan=new Scanner(System.in);
     List<String> listUretSayi =new ArrayList<>();
-
+    int kacKeredeBuldun;
     String dosyaYolu = "src/main/java/sayiBulmaca/file.txt"; // Okunacak ve güncellenecek dosyanın yolu
+    String puanYolu = "src/main/java/sayiBulmaca/puan.txt"; // Okunacak ve güncellenecek dosyanın yolu
 
     public void starting() throws IOException {
         dosyaOkuma();
-
+        puanOkuma();
         System.out.println("========== SAYI BULMA OYUNU ==========");
         System.out.println("||                                  ||");
         System.out.println("||  Sayı bulma oyununa hoşgeldiniz. ||");
-        System.out.println("||     Şu an ki seviyeniz : "+getLevel()+".      ||");
+        System.out.println("||      Oyun seviyeniz : "+getLevel()+".         ||");
+        System.out.println("||      Oyun Puaniniz  : "+getPuan()+"      ||");
         System.out.println("||                                  ||");
-        System.out.println("============ made by msk =============");
+        System.out.println("===========> made by msk <============");
         System.out.println("");
+        System.out.println("===>>> OYUN YÜKLENİYOR <<<====");
         bekletme(10);
     }
     public void aciklamaOncesi() throws IOException {
-        System.out.println("Oyunun nasıl oynandığını öğrenmek istermisiniz. ");
-        System.out.print("Oyunla ilgili açıklamayı görmek için 'E', oyuna başlamak için 'H' yazınız.>> ");
+        System.out.println("Oyunun nasıl oynandığını öğrenmek istermisiniz? ");
+        System.out.print("Oyun ile ilgili açıklamayı görmek için 'E', oyuna başlamak için herhangi bir karakter yazınız.>> ");
         String cevap = scan.next().toUpperCase().substring(0, 1);
         if (cevap.equals("E")) {
             aciklama();
-            bekletme(40);
+            bekletme(30);
             seviyeDevam();
         } else {
             seviyeDevam();
@@ -36,25 +39,30 @@ public class Methods extends Objects{
     private void seviyeDevam() throws IOException {
         if(getLevel()==1){
             sayiUret(getLevel());
+            setPuan(0); // 1.
             System.out.println("===>>> OYUN BASLIYOR <<<====");
             bekletme(15);
             sayiKontrol();
         }else {
-            System.out.print(getLevel() + ". seviyeden devam etmek icin  'D', 1. seviyeden baslamak icin 'Y' yaziniz. >>");
+            System.out.print(getLevel() + ". seviyeden devam etmek icin  'D', 1. seviyeden başlamak için herhangi bir karakter yazınız. >>");
             String stChar = scan.next().toUpperCase().substring(0, 1);
             if(stChar.equals("D")){
+                System.out.println(getLevel()+". SEVİYE YÜKLENİYOR");
                 setLevel(getLevel());
+                setPuan(getPuan()); // 2
                 sayiUret(getLevel());
-                System.out.println("===>>> OYUN BASLIYOR <<<====");
+                System.out.println("===>>> OYUN BAŞLIYOR <<<====");
                 bekletme(15);
                 sayiKontrol();
 
             }else{
+                System.out.println("1. SEVİYE YÜKLENİYOR");
                 setLevel(1);
+                setPuan(0);
+                puanYazma(); //3
                 dosyaYazma();
-                System.out.println("SEVIYE 1");
                 sayiUret(getLevel());
-                System.out.println("===>>> OYUN BASLIYOR <<<====");
+                System.out.println("===>>> OYUN BAŞLIYOR <<<====");
                 bekletme(15);
                 sayiKontrol();
 
@@ -62,7 +70,7 @@ public class Methods extends Objects{
         }
 
     }
-    int kacKeredeBuldun;
+
     private void sayiKontrol() throws IOException {
         List<String> listGirilenSayi = new ArrayList<>();
         int arti;
@@ -73,7 +81,7 @@ public class Methods extends Objects{
             arti = 0;
             toplamBulunan = 0;
             listGirilenSayi.clear();
-            System.out.print("Lutfen " + getLevel() + " basamakli, rakamlari birbirinden farkli bir sayi giriniz :");
+            System.out.print("Lutfen " + getLevel() + " basamaklı, rakamları birbirinden farklı bir sayı giriniz :");
             String strGirilenSayi = scan.next();
 
             for (int i = 0; i < strGirilenSayi.length(); i++) {
@@ -81,12 +89,14 @@ public class Methods extends Objects{
             }
 
             if (strGirilenSayi.replaceAll("[^0-9]", "").length() < getLevel()) {
-                System.out.println("Girilen " + strGirilenSayi + " degeri uygun degildir.");
+                System.out.println("Girilen " + strGirilenSayi + " değeri uygun değildir.");
             } else if (strGirilenSayi.length() != getLevel()) {
-                System.out.println("Girilen " + strGirilenSayi + " degeri uygun degildir.");
+                System.out.println("Girilen " + strGirilenSayi + " değeri uygun değildir.");
             } else if (listGirilenSayi.stream().distinct().count() < getLevel()) {
-                System.out.println("Girilen " + strGirilenSayi + " degeri uygun degildir.");
-            } else {
+                System.out.println("Girilen " + strGirilenSayi + " değeri uygun değildir.");
+            }else if(strGirilenSayi.substring(0,1).equals("0")){
+                System.out.println("Girilen " + strGirilenSayi + " değeri uygun değildir.");
+            }else {
                 for (int i = 0; i < getLevel() ; i++) {
                     for (int j = 0; j < getLevel() ; j++) {
                         if (listGirilenSayi.get(i).equals(listUretSayi.get(j))) {
@@ -103,7 +113,7 @@ public class Methods extends Objects{
 
                     if(arti==getLevel()){
                         //System.out.println("Sayiniz : " + listGirilenSayi);
-                        System.out.println("+ "+arti +"  Tebrikler, " + kacKeredeBuldun + ". denemede buldunuz.");
+                        System.out.println("+ "+arti +" <-> Tebrikler, " + kacKeredeBuldun + ". denemede buldunuz.");
                         System.out.println("Tutulan Sayi : " + listUretSayi);
                     }else{
                         //System.out.println("Sayiniz : " + listGirilenSayi);
@@ -112,21 +122,20 @@ public class Methods extends Objects{
                 }
 
         } while (arti < getLevel());
-
+        puanHesapla();
+        puanYazma();
         setLevel(getLevel()+1);
         if(getLevel()==10){
             System.out.println("Tebrikler. 9 seviyeli oyunu bitirdiniz.");
-            puanHesapla();
             setLevel(1);
             dosyaYazma();
             System.out.println("Oyun seviyesi 1 olarak güncellendi.");
         }else {
-            System.out.println("Tebrikler " + getLevel() + ". seviyeye gectiniz. ");
-            puanHesapla();
+            System.out.println("Tebrikler " + getLevel() + ". seviyeye geçtiniz. ");
             dosyaYazma();
         }
 
-            System.out.println(getLevel() + ". seviyede devam etmek icin 'D', cikmak icin 'Q' yaziniz : ");
+            System.out.println(getLevel() + ". seviyeden devam etmek icin 'D', çıkmak için herhangi bir katakter yazınız : ");
             String devamEt = scan.next().toUpperCase().substring(0, 1);
             if (devamEt.equals("D")) {
 
@@ -183,7 +192,7 @@ public class Methods extends Objects{
         System.out.println("|| '-' (eksi) değer <--> ise yeri yanlış bilinen sayi adedini gösterir.     ||");
         System.out.println("|| Kullanıcı basamak adedince '+' değer bulana kadar oyuna devam eder.      ||");
         System.out.println("|| Oyun bitirildiğinde yeni bir seviyeye geçer ve bu seviye kaydedilir.     ||");
-        System.out.println("|| ======================================================================== ||");
+        System.out.println("|| =============================> made by msk <============================ ||");
     }
 private void puanHesapla() throws IOException {
         double yeniPuan=getPuan();
@@ -216,6 +225,31 @@ private void dosyaOkuma() throws IOException {
             System.out.println("Seviye güncelleme işlemi tamamlandı.");
         } catch (IOException e) {
             System.out.println("Dosya güncelleme hatası: " + e.getMessage());
-        }    }
+        }
+    }
+    private void puanYazma() throws IOException {
+// Dosyayı yazma işlemi
+        String yeniPuan = "";
+        yeniPuan=String.valueOf(getPuan());
+        try (BufferedWriter bp = new BufferedWriter(new FileWriter(puanYolu, false))) {
+            bp.write(yeniPuan); // Yeni içeriği dosyaya yazma
+            bekletme(10);
+            System.out.println("Puan güncelleme işlemi tamamlandı.");
+        } catch (IOException e) {
+            System.out.println("Dosya güncelleme hatası: " + e.getMessage());
+        }
+    }
+    private void puanOkuma() throws IOException {
+// Dosyayı okuma işlemi
+        String puan="";
+        try (BufferedReader bp = new BufferedReader(new FileReader(puanYolu))) {
+
+            while ((puan = bp.readLine()) != null) {
+                setPuan(Double.parseDouble(puan));
+            }
+        } catch (IOException e) {
+            System.out.println("Dosya okuma hatası: " + e.getMessage());
+        }
+    }
 
 }

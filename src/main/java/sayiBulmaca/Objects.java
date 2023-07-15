@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class Objects {
     private int level;
-    private double puan=0;
+    private double puan;
 
 
     public int getLevel() throws IOException {
